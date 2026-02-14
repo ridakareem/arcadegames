@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Heart Catch - Arcade</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-wrapper">
+        <!-- Old PlayStation Shell -->
+        <div id="playstation-shell">
+            <div id="ps-top">
+                <div id="ps-logo">PLAYSTATION</div>
+                <div id="ps-lid">
+                    <div id="ps-disc-slot"></div>
+                </div>
+            </div>
+            <div id="ps-body">
+                <div id="ps-screen-bezel">
+                    <div id="ps-screen-container">
+                        <div id="game-canvas-wrapper"></div>
+                        <div id="start-screen">
+                            <h1>VALENTINE'S HEART CATCH</h1>
+                            <p>❤️ Catch RED hearts | Avoid BROKEN hearts ❤️</p>
+                            <button id="start-btn">INSERT COIN / START</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="ps-controls">
+                    <div id="d-pad">
+                        <div class="dpad-up"></div>
+                        <div class="dpad-down"></div>
+                        <div class="dpad-left"></div>
+                        <div class="dpad-right"></div>
+                        <div class="dpad-center"></div>
+                    </div>
+                    <div id="buttons">
+                        <div class="btn btn-triangle"></div>
+                        <div class="btn btn-circle"></div>
+                        <div class="btn btn-cross"></div>
+                        <div class="btn btn-square"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="ps-bottom">
+                <div id="ps-ports"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
