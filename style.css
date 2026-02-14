@@ -141,7 +141,90 @@ body {
 }
 
 /* Start Screen */
-#start-screen {
+#game-select-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+
+#game-select-screen h1 {
+    font-size: 12px;
+    margin-bottom: 10px;
+    text-shadow: 3px 3px 0 #000;
+    color: #fbbf24;
+    animation: blink 1.5s infinite;
+}
+
+#game-select-screen .subtitle {
+    font-size: 6px;
+    margin-bottom: 20px;
+    color: #94a3b8;
+}
+
+.game-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+    max-width: 280px;
+}
+
+.game-card {
+    font-family: 'Press Start 2P', monospace;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 3px solid #334155;
+    border-radius: 6px;
+    padding: 15px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 0 #0f172a;
+}
+
+.game-card:hover {
+    border-color: #fbbf24;
+    transform: translateY(-3px);
+    box-shadow: 0 7px 0 #0f172a;
+}
+
+.game-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #0f172a;
+}
+
+.game-icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.game-title {
+    font-size: 7px;
+    color: #fbbf24;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.game-desc {
+    font-size: 5px;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.start-screen {
     position: absolute;
     top: 0;
     left: 0;
@@ -157,7 +240,7 @@ body {
     padding: 20px;
 }
 
-#start-screen h1 {
+.start-screen h1 {
     font-size: 10px;
     margin-bottom: 15px;
     line-height: 1.6;
@@ -165,13 +248,19 @@ body {
     animation: blink 1.5s infinite;
 }
 
-#start-screen p {
+.start-screen p {
     font-size: 6px;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     color: #ffb3d9;
 }
 
-#start-btn {
+.start-screen .tip {
+    font-size: 5px;
+    color: #fbbf24;
+    margin-bottom: 20px;
+}
+
+.start-btn {
     font-family: 'Press Start 2P', monospace;
     font-size: 8px;
     padding: 12px 20px;
@@ -182,17 +271,41 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 0 #ad1457;
     transition: all 0.1s;
-    image-rendering: pixelated;
+    margin-bottom: 10px;
 }
 
-#start-btn:hover {
+.start-btn:hover {
     background: #ff4081;
     transform: translateY(-2px);
 }
 
-#start-btn:active {
+.start-btn:active {
     transform: translateY(2px);
     box-shadow: 0 2px 0 #ad1457;
+}
+
+.back-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    padding: 8px 15px;
+    background: #334155;
+    color: #94a3b8;
+    border: 2px solid #475569;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #1e293b;
+    transition: all 0.1s;
+}
+
+.back-btn:hover {
+    background: #475569;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.back-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #1e293b;
 }
 
 @keyframes blink {
@@ -200,9 +313,13 @@ body {
     51%, 100% { opacity: 0.6; }
 }
 
-/* Hide start screen when game is active */
-#start-screen.hidden {
-    display: none;
+/* Hide screens when not active */
+.hidden {
+    display: none !important;
+}
+
+#game-select-screen.hidden {
+    display: none !important;
 }
 
 /* PlayStation Controls */
