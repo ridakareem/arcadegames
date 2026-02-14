@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine's Heart Catch - Arcade</title>
+    <title>Arcade Games - PlayStation Style</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,10 +20,39 @@
                 <div id="ps-screen-bezel">
                     <div id="ps-screen-container">
                         <div id="game-canvas-wrapper"></div>
-                        <div id="start-screen">
-                            <h1>VALENTINE'S HEART CATCH</h1>
+                        
+                        <!-- Game Selection Menu -->
+                        <div id="game-select-screen">
+                            <h1>ARCADE SELECT</h1>
+                            <p class="subtitle">CHOOSE YOUR GAME</p>
+                            <div class="game-grid">
+                                <button class="game-card" data-game="hearts">
+                                    <div class="game-icon">❤️</div>
+                                    <div class="game-title">HEART CATCH</div>
+                                    <div class="game-desc">Catch hearts, avoid broken ones</div>
+                                </button>
+                                <button class="game-card" data-game="asteroids">
+                                    <div class="game-icon">💔</div>
+                                    <div class="game-title">HEARTBREAK</div>
+                                    <div class="game-desc">Break hearts, risk for power</div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Individual Game Start Screens -->
+                        <div id="start-screen-hearts" class="start-screen hidden">
+                            <h1>HEART CATCH</h1>
                             <p>❤️ Catch RED hearts | Avoid BROKEN hearts ❤️</p>
-                            <button id="start-btn">INSERT COIN / START</button>
+                            <button class="start-btn" data-game="hearts">START GAME</button>
+                            <button class="back-btn">← BACK</button>
+                        </div>
+                        
+                        <div id="start-screen-asteroids" class="start-screen hidden">
+                            <h1>HEARTBREAK</h1>
+                            <p>💔 Break falling hearts | 🔥 Risk for power cores</p>
+                            <p class="tip">Hold cores for 3s to double score!</p>
+                            <button class="start-btn" data-game="asteroids">START GAME</button>
+                            <button class="back-btn">← BACK</button>
                         </div>
                     </div>
                 </div>
