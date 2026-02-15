@@ -115,7 +115,7 @@ function startGame(game) {
                 debug: false
             }
         },
-        scene: game === 'hearts' ? HeartCatchScene : AsteroidGreedScene
+        scene: game === 'hearts' ? HeartCatchScene : (game === 'asteroids' ? AsteroidGreedScene : null)
     };
     
     window.arcadeGame = new Phaser.Game(config);
@@ -883,25 +883,46 @@ function loadFlamesGame() {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                padding: 20px;
-                overflow-y: auto;
+                justify-content: flex-start;
+                padding: 15px 20px 15px 20px;
+                overflow-y: scroll !important;
+                overflow-x: hidden;
+                box-sizing: border-box;
+            }
+            .flames-container::-webkit-scrollbar {
+                width: 12px;
+                display: block;
+            }
+            .flames-container::-webkit-scrollbar-track {
+                background: #1e293b;
+                border-radius: 10px;
+                border: 2px solid #0f172a;
+            }
+            .flames-container::-webkit-scrollbar-thumb {
+                background: #fbbf24;
+                border-radius: 6px;
+                border: 2px solid #1e293b;
+            }
+            .flames-container::-webkit-scrollbar-thumb:hover {
+                background: #f59e0b;
             }
             .flames-title {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 10px;
+                font-size: 14px;
                 color: #fbbf24;
-                margin-bottom: 15px;
+                margin-bottom: 10px;
                 text-shadow: 2px 2px 0 #000;
+                flex-shrink: 0;
             }
             .flames-input-group {
                 width: 100%;
                 max-width: 260px;
-                margin-bottom: 10px;
+                margin-bottom: 8px;
+                flex-shrink: 0;
             }
             .flames-label {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 5px;
+                font-size: 7px;
                 color: #94a3b8;
                 margin-bottom: 4px;
                 display: block;
@@ -913,7 +934,7 @@ function loadFlamesGame() {
                 border: 2px solid #334155;
                 color: #fff;
                 font-family: 'Press Start 2P', monospace;
-                font-size: 6px;
+                font-size: 8px;
                 outline: none;
             }
             .flames-input:focus {
@@ -921,14 +942,14 @@ function loadFlamesGame() {
             }
             .flames-btn {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 6px;
+                font-size: 8px;
                 padding: 10px 15px;
                 background: #e91e63;
                 color: #fff;
                 border: 3px solid #ff4081;
                 cursor: pointer;
                 box-shadow: 0 3px 0 #ad1457;
-                margin: 10px 0;
+                margin: 8px 0;
             }
             .flames-btn:hover {
                 background: #ff4081;
@@ -939,13 +960,15 @@ function loadFlamesGame() {
             }
             .flames-back-btn {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 5px;
+                font-size: 7px;
                 padding: 6px 10px;
                 background: #334155;
                 color: #94a3b8;
                 border: 2px solid #475569;
                 cursor: pointer;
-                margin-top: 5px;
+                margin-top: 8px;
+                margin-bottom: 15px;
+                flex-shrink: 0;
             }
             .flames-back-btn:hover {
                 background: #475569;
@@ -954,18 +977,18 @@ function loadFlamesGame() {
             .flames-display {
                 display: flex;
                 gap: 4px;
-                margin: 15px 0;
+                margin: 10px 0;
                 flex-wrap: wrap;
                 justify-content: center;
             }
             .flame-letter {
-                width: 28px;
-                height: 28px;
+                width: 32px;
+                height: 32px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-family: 'Press Start 2P', monospace;
-                font-size: 8px;
+                font-size: 10px;
                 background: #1e293b;
                 border: 2px solid #334155;
                 color: #fbbf24;
@@ -984,39 +1007,52 @@ function loadFlamesGame() {
             }
             .flames-result {
                 text-align: center;
-                margin-top: 15px;
-                padding: 15px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                padding: 12px;
                 background: #1e293b;
                 border: 3px solid #fbbf24;
                 max-width: 260px;
             }
             .flames-result-letter {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 24px;
+                font-size: 32px;
                 color: #e91e63;
                 margin-bottom: 8px;
             }
             .flames-result-meaning {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 7px;
+                font-size: 10px;
                 color: #fbbf24;
             }
             .flames-info {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 5px;
+                font-size: 6px;
                 color: #94a3b8;
                 margin-top: 10px;
+                margin-bottom: 8px;
                 text-align: center;
                 max-width: 260px;
+                flex-shrink: 0;
             }
             .flames-step {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 5px;
+                font-size: 7px;
                 color: #cbd5e1;
                 margin: 8px 0;
                 padding: 6px;
                 background: #1e293b;
                 border-left: 3px solid #fbbf24;
+                flex-shrink: 0;
+            }
+            #flames-steps {
+                flex-shrink: 0;
+            }
+            #flames-letters {
+                flex-shrink: 0;
+            }
+            #flames-result-container {
+                flex-shrink: 0;
             }
         </style>
         
