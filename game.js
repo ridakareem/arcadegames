@@ -43,6 +43,8 @@ function showGameSelect() {
     document.getElementById('game-select-screen').classList.remove('hidden');
     document.getElementById('start-screen-hearts').classList.add('hidden');
     document.getElementById('start-screen-asteroids').classList.add('hidden');
+    document.getElementById('start-screen-flames').classList.add('hidden');
+    document.getElementById('start-screen-memory').classList.add('hidden');
     
     const canvasWrapper = document.getElementById('game-canvas-wrapper');
     canvasWrapper.classList.remove('zoom-in', 'active');
@@ -61,6 +63,10 @@ function showGameStart(game) {
         document.getElementById('start-screen-hearts').classList.remove('hidden');
     } else if (game === 'asteroids') {
         document.getElementById('start-screen-asteroids').classList.remove('hidden');
+    } else if (game === 'flames') {
+        document.getElementById('start-screen-flames').classList.remove('hidden');
+    } else if (game === 'memory') {
+        document.getElementById('start-screen-memory').classList.remove('hidden');
     }
 }
 
@@ -69,6 +75,18 @@ function startGame(game) {
     
     document.getElementById('start-screen-hearts').classList.add('hidden');
     document.getElementById('start-screen-asteroids').classList.add('hidden');
+    document.getElementById('start-screen-flames').classList.add('hidden');
+    document.getElementById('start-screen-memory').classList.add('hidden');
+    
+    if (game === 'flames') {
+        loadFlamesGame();
+        return;
+    }
+    
+    if (game === 'memory') {
+        loadMemoryGame();
+        return;
+    }
     
     const canvasWrapper = document.getElementById('game-canvas-wrapper');
     canvasWrapper.classList.remove('zoom-out');
@@ -831,4 +849,575 @@ class AsteroidGreedScene extends Phaser.Scene {
             returnToMenu(this, false, this.score);
         });
     }
+}
+
+// ============================================================================
+// GAME 3: FLAMES (HTML-based love calculator)
+// ============================================================================
+
+function loadFlamesGame() {
+    const canvasWrapper = document.getElementById('game-canvas-wrapper');
+    canvasWrapper.classList.remove('zoom-out');
+    canvasWrapper.classList.add('active', 'zoom-in');
+    
+    if (window.arcadeGame) {
+        window.arcadeGame.destroy(true);
+        window.arcadeGame = null;
+    }
+    
+    const FLAMES = [
+        { letter: 'F', meaning: 'Friends' },
+        { letter: 'L', meaning: 'Lover' },
+        { letter: 'A', meaning: 'Affection' },
+        { letter: 'M', meaning: 'Marriage' },
+        { letter: 'E', meaning: 'Enemy' },
+        { letter: 'S', meaning: 'Sister' }
+    ];
+    
+    canvasWrapper.innerHTML = `
+        <style>
+            .flames-container {
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                overflow-y: auto;
+            }
+            .flames-title {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 10px;
+                color: #fbbf24;
+                margin-bottom: 15px;
+                text-shadow: 2px 2px 0 #000;
+            }
+            .flames-input-group {
+                width: 100%;
+                max-width: 260px;
+                margin-bottom: 10px;
+            }
+            .flames-label {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 5px;
+                color: #94a3b8;
+                margin-bottom: 4px;
+                display: block;
+            }
+            .flames-input {
+                width: 100%;
+                padding: 8px;
+                background: #1e293b;
+                border: 2px solid #334155;
+                color: #fff;
+                font-family: 'Press Start 2P', monospace;
+                font-size: 6px;
+                outline: none;
+            }
+            .flames-input:focus {
+                border-color: #fbbf24;
+            }
+            .flames-btn {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 6px;
+                padding: 10px 15px;
+                background: #e91e63;
+                color: #fff;
+                border: 3px solid #ff4081;
+                cursor: pointer;
+                box-shadow: 0 3px 0 #ad1457;
+                margin: 10px 0;
+            }
+            .flames-btn:hover {
+                background: #ff4081;
+            }
+            .flames-btn:active {
+                transform: translateY(2px);
+                box-shadow: 0 1px 0 #ad1457;
+            }
+            .flames-back-btn {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 5px;
+                padding: 6px 10px;
+                background: #334155;
+                color: #94a3b8;
+                border: 2px solid #475569;
+                cursor: pointer;
+                margin-top: 5px;
+            }
+            .flames-back-btn:hover {
+                background: #475569;
+                color: #fff;
+            }
+            .flames-display {
+                display: flex;
+                gap: 4px;
+                margin: 15px 0;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .flame-letter {
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Press Start 2P', monospace;
+                font-size: 8px;
+                background: #1e293b;
+                border: 2px solid #334155;
+                color: #fbbf24;
+            }
+            .flame-letter.crossed {
+                background: #0f172a;
+                color: #475569;
+                text-decoration: line-through;
+                opacity: 0.5;
+            }
+            .flame-letter.final {
+                background: #e91e63;
+                color: #fff;
+                border-color: #ff4081;
+                transform: scale(1.15);
+            }
+            .flames-result {
+                text-align: center;
+                margin-top: 15px;
+                padding: 15px;
+                background: #1e293b;
+                border: 3px solid #fbbf24;
+                max-width: 260px;
+            }
+            .flames-result-letter {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 24px;
+                color: #e91e63;
+                margin-bottom: 8px;
+            }
+            .flames-result-meaning {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 7px;
+                color: #fbbf24;
+            }
+            .flames-info {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 5px;
+                color: #94a3b8;
+                margin-top: 10px;
+                text-align: center;
+                max-width: 260px;
+            }
+            .flames-step {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 5px;
+                color: #cbd5e1;
+                margin: 8px 0;
+                padding: 6px;
+                background: #1e293b;
+                border-left: 3px solid #fbbf24;
+            }
+        </style>
+        
+        <div class="flames-container">
+            <div class="flames-title">FLAMES</div>
+            <div class="flames-input-group">
+                <label class="flames-label">FIRST NAME</label>
+                <input type="text" class="flames-input" id="flames-name1" autocomplete="off">
+            </div>
+            <div class="flames-input-group">
+                <label class="flames-label">SECOND NAME</label>
+                <input type="text" class="flames-input" id="flames-name2" autocomplete="off">
+            </div>
+            <button class="flames-btn" id="flames-calc-btn">CALCULATE</button>
+            <div id="flames-steps"></div>
+            <div class="flames-display" id="flames-letters"></div>
+            <div id="flames-result-container"></div>
+            <div class="flames-info">F=Friends L=Lover A=Affection<br>M=Marriage E=Enemy S=Sister</div>
+            <button class="flames-back-btn" id="flames-back">← BACK TO MENU</button>
+        </div>
+    `;
+    
+    // FLAMES logic
+    function cleanName(name) {
+        return name.toLowerCase().replace(/[^a-z]/g, '').split('');
+    }
+    
+    function eliminateCommon(name1Arr, name2Arr) {
+        const n1 = [...name1Arr];
+        const n2 = [...name2Arr];
+        const result1 = [];
+        const result2 = [];
+        
+        for (const char of n1) {
+            const idx = n2.indexOf(char);
+            if (idx === -1) {
+                result1.push(char);
+            } else {
+                n2.splice(idx, 1);
+            }
+        }
+        for (const char of n2) {
+            result2.push(char);
+        }
+        
+        return { remaining1: result1, remaining2: result2 };
+    }
+    
+    function runFlamesStepByStep(count) {
+        const steps = [];
+        let letters = FLAMES.map(f => f.letter);
+        let index = 0;
+        if (count === 0) return { steps: [], final: 'F' };
+        
+        while (letters.length > 1) {
+            index = (index + count - 1) % letters.length;
+            const removed = letters[index];
+            letters.splice(index, 1);
+            index = index % letters.length;
+            steps.push({ removed, remaining: [...letters] });
+        }
+        
+        return { steps, final: letters[0] };
+    }
+    
+    document.getElementById('flames-calc-btn').addEventListener('click', () => {
+        const name1 = document.getElementById('flames-name1').value.trim();
+        const name2 = document.getElementById('flames-name2').value.trim();
+        
+        if (!name1 || !name2) return;
+        
+        const arr1 = cleanName(name1);
+        const arr2 = cleanName(name2);
+        
+        const { remaining1, remaining2 } = eliminateCommon(arr1, arr2);
+        const totalCount = remaining1.length + remaining2.length;
+        
+        const { steps, final } = runFlamesStepByStep(totalCount);
+        const result = FLAMES.find(f => f.letter === final);
+        
+        // Show steps
+        const stepsEl = document.getElementById('flames-steps');
+        stepsEl.innerHTML = `
+            <div class="flames-step">${name1} & ${name2}</div>
+            <div class="flames-step">Count: ${totalCount}</div>
+        `;
+        
+        // Show FLAMES letters
+        const lettersEl = document.getElementById('flames-letters');
+        lettersEl.innerHTML = '';
+        const letterElements = {};
+        FLAMES.forEach(f => {
+            const span = document.createElement('span');
+            span.className = 'flame-letter';
+            span.textContent = f.letter;
+            span.dataset.letter = f.letter;
+            letterElements[f.letter] = span;
+            lettersEl.appendChild(span);
+        });
+        
+        // Animate eliminations
+        let stepIndex = 0;
+        const interval = setInterval(() => {
+            if (stepIndex >= steps.length) {
+                clearInterval(interval);
+                letterElements[result.letter].classList.add('final');
+                
+                document.getElementById('flames-result-container').innerHTML = `
+                    <div class="flames-result">
+                        <div class="flames-result-letter">${result.letter}</div>
+                        <div class="flames-result-meaning">${result.meaning}</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const step = steps[stepIndex];
+            const letterEl = letterElements[step.removed];
+            if (letterEl && !letterEl.classList.contains('crossed')) {
+                letterEl.classList.add('crossed');
+            }
+            stepIndex++;
+        }, 600);
+    });
+    
+    document.getElementById('flames-back').addEventListener('click', () => {
+        showGameSelect();
+    });
+}
+
+// ============================================================================
+// GAME 4: MEMORY MATCH (2 Players - She always wins!)
+// ============================================================================
+
+function loadMemoryGame() {
+    const canvasWrapper = document.getElementById('game-canvas-wrapper');
+    canvasWrapper.classList.remove('zoom-out');
+    canvasWrapper.classList.add('active', 'zoom-in');
+    
+    if (window.arcadeGame) {
+        window.arcadeGame.destroy(true);
+        window.arcadeGame = null;
+    }
+    
+    const hearts = ['❤️', '💕', '💖', '💗', '💝', '💘', '💓', '💞'];
+    let cards = [...hearts, ...hearts].sort(() => Math.random() - 0.5);
+    
+    let flippedCards = [];
+    let matchedPairs = [];
+    let currentPlayer = 'he';
+    let heScore = 0;
+    let sheScore = 0;
+    let canFlip = true;
+    
+    canvasWrapper.innerHTML = `
+        <style>
+            .memory-container {
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 15px;
+                overflow-y: auto;
+            }
+            .memory-title {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 9px;
+                color: #fbbf24;
+                margin-bottom: 10px;
+                text-shadow: 2px 2px 0 #000;
+            }
+            .memory-scoreboard {
+                display: flex;
+                gap: 20px;
+                margin-bottom: 10px;
+                font-family: 'Press Start 2P', monospace;
+                font-size: 6px;
+            }
+            .player-score {
+                padding: 6px 10px;
+                border: 2px solid #334155;
+                background: #1e293b;
+            }
+            .player-score.active {
+                border-color: #fbbf24;
+                background: #2d1b4e;
+            }
+            .player-score.he {
+                color: #60a5fa;
+            }
+            .player-score.she {
+                color: #f472b6;
+            }
+            .memory-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+                margin-bottom: 15px;
+                max-width: 260px;
+            }
+            .memory-card {
+                width: 55px;
+                height: 55px;
+                background: #1e293b;
+                border: 3px solid #334155;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                cursor: pointer;
+                transition: all 0.3s;
+                position: relative;
+            }
+            .memory-card.flipped {
+                background: #2d1b4e;
+                border-color: #fbbf24;
+            }
+            .memory-card.matched {
+                background: #0f172a;
+                border-color: #059669;
+                opacity: 0.6;
+                cursor: default;
+            }
+            .memory-card:not(.flipped):not(.matched)::before {
+                content: '?';
+                font-family: 'Press Start 2P', monospace;
+                font-size: 24px;
+                color: #475569;
+            }
+            .memory-card.flipped .card-emoji,
+            .memory-card.matched .card-emoji {
+                display: block;
+            }
+            .card-emoji {
+                display: none;
+            }
+            .memory-result {
+                text-align: center;
+                padding: 15px;
+                background: #1e293b;
+                border: 3px solid #fbbf24;
+                max-width: 260px;
+                margin-top: 10px;
+            }
+            .memory-winner {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 10px;
+                color: #f472b6;
+                margin-bottom: 8px;
+            }
+            .memory-final-score {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 6px;
+                color: #cbd5e1;
+                margin-bottom: 10px;
+            }
+            .memory-back-btn {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 5px;
+                padding: 6px 10px;
+                background: #334155;
+                color: #94a3b8;
+                border: 2px solid #475569;
+                cursor: pointer;
+                margin-top: 8px;
+            }
+            .memory-back-btn:hover {
+                background: #475569;
+                color: #fff;
+            }
+        </style>
+        
+        <div class="memory-container">
+            <div class="memory-title">MEMORY MATCH</div>
+            <div class="memory-scoreboard">
+                <div class="player-score he active" id="he-score">HE: 0</div>
+                <div class="player-score she" id="she-score">SHE: 0</div>
+            </div>
+            <div class="memory-grid" id="memory-grid"></div>
+            <div id="memory-result-container"></div>
+            <button class="memory-back-btn" id="memory-back">← BACK TO MENU</button>
+        </div>
+    `;
+    
+    const gridEl = document.getElementById('memory-grid');
+    cards.forEach((emoji, index) => {
+        const card = document.createElement('div');
+        card.className = 'memory-card';
+        card.dataset.index = index;
+        card.dataset.emoji = emoji;
+        card.innerHTML = `<span class="card-emoji">${emoji}</span>`;
+        card.addEventListener('click', () => flipCard(card));
+        gridEl.appendChild(card);
+    });
+    
+    function updateScoreboard() {
+        document.getElementById('he-score').textContent = `HE: ${heScore}`;
+        document.getElementById('she-score').textContent = `SHE: ${sheScore}`;
+        
+        document.getElementById('he-score').classList.toggle('active', currentPlayer === 'he');
+        document.getElementById('she-score').classList.toggle('active', currentPlayer === 'she');
+    }
+    
+    function flipCard(card) {
+        if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) {
+            return;
+        }
+        
+        card.classList.add('flipped');
+        flippedCards.push(card);
+        
+        if (flippedCards.length === 2) {
+            canFlip = false;
+            checkMatch();
+        }
+    }
+    
+    function checkMatch() {
+        const [card1, card2] = flippedCards;
+        const match = card1.dataset.emoji === card2.dataset.emoji;
+        
+        setTimeout(() => {
+            if (match) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs.push(card1.dataset.emoji);
+                
+                if (currentPlayer === 'he') {
+                    heScore++;
+                } else {
+                    sheScore++;
+                }
+                
+                updateScoreboard();
+                
+                if (matchedPairs.length === 8) {
+                    setTimeout(() => showResult(), 500);
+                }
+            } else {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                currentPlayer = currentPlayer === 'he' ? 'she' : 'he';
+                updateScoreboard();
+            }
+            
+            flippedCards = [];
+            canFlip = true;
+        }, 1000);
+    }
+    
+    function showResult() {
+        const resultEl = document.getElementById('memory-result-container');
+        
+        // Determine actual winner
+        let actualWinner = heScore > sheScore ? 'he' : (sheScore > heScore ? 'she' : 'tie');
+        
+        if (actualWinner === 'tie') {
+            resultEl.innerHTML = `
+                <div class="memory-result">
+                    <div class="memory-winner">IT'S A TIE!</div>
+                    <div class="memory-final-score">HE: ${heScore} | SHE: ${sheScore}</div>
+                </div>
+            `;
+            setTimeout(() => {
+                resultEl.querySelector('.memory-winner').textContent = 'SHE WINS! ♥';
+            }, 2000);
+        } else if (actualWinner === 'he') {
+            // He wins initially, but then "she" appears
+            resultEl.innerHTML = `
+                <div class="memory-result">
+                    <div class="memory-winner" id="winner-text">HE WINS!</div>
+                    <div class="memory-final-score">HE: ${heScore} | SHE: ${sheScore}</div>
+                </div>
+            `;
+            
+            // Magic happens - "S" appears to make it "SHE WINS!"
+            setTimeout(() => {
+                const winnerText = document.getElementById('winner-text');
+                let currentText = 'HE WINS!';
+                winnerText.textContent = currentText;
+                
+                setTimeout(() => {
+                    // Add "S" before "HE"
+                    winnerText.textContent = 'SHE WINS! ♥';
+                    winnerText.style.color = '#f472b6';
+                }, 1500);
+            }, 1000);
+        } else {
+            // She actually won
+            resultEl.innerHTML = `
+                <div class="memory-result">
+                    <div class="memory-winner">SHE WINS! ♥</div>
+                    <div class="memory-final-score">HE: ${heScore} | SHE: ${sheScore}</div>
+                </div>
+            `;
+        }
+    }
+    
+    document.getElementById('memory-back').addEventListener('click', () => {
+        showGameSelect();
+    });
 }
