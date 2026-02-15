@@ -1,110 +1,381 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Games - PlayStation Style</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="game-wrapper">
-        <!-- Old PlayStation Shell -->
-        <div id="playstation-shell">
-            <div id="ps-top">
-                <div id="ps-logo">PLAYSTATION</div>
-                <div id="ps-lid">
-                    <div id="ps-disc-slot"></div>
-                </div>
-            </div>
-            <div id="ps-body">
-                <div id="ps-screen-bezel">
-                    <div id="ps-screen-container">
-                        <div id="game-canvas-wrapper"></div>
-                        
-                        <!-- Game Selection Menu -->
-                        <div id="game-select-screen">
-                            <h1>ARCADE SELECT</h1>
-                            <p class="subtitle">CHOOSE YOUR GAME</p>
-                            <div class="game-grid">
-                                <button class="game-card" data-game="hearts">
-                                    <div class="game-icon">❤️</div>
-                                    <div class="game-title">HEART CATCH</div>
-                                    <div class="game-desc">Catch hearts, avoid broken ones</div>
-                                </button>
-                                <button class="game-card" data-game="asteroids">
-                                    <div class="game-icon">💔</div>
-                                    <div class="game-title">HEARTBREAK</div>
-                                    <div class="game-desc">Break hearts, risk for power</div>
-                                </button>
-                                <button class="game-card" data-game="flames">
-                                    <div class="game-icon">🔥</div>
-                                    <div class="game-title">FLAMES</div>
-                                    <div class="game-desc">Love calculator game</div>
-                                </button>
-                                <button class="game-card" data-game="memory">
-                                    <div class="game-icon">🎴</div>
-                                    <div class="game-title">MEMORY</div>
-                                    <div class="game-desc">Match pairs to win</div>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Individual Game Start Screens -->
-                        <div id="start-screen-hearts" class="start-screen hidden">
-                            <h1>HEART CATCH</h1>
-                            <p>❤️ Catch RED hearts | Avoid BROKEN hearts ❤️</p>
-                            <button class="start-btn" data-game="hearts">START GAME</button>
-                            <button class="back-btn">← BACK</button>
-                        </div>
-                        
-                        <div id="start-screen-asteroids" class="start-screen hidden">
-                            <h1>HEARTBREAK</h1>
-                            <p>💔 Break falling hearts | 🔥 Risk for power cores</p>
-                            <p class="tip">Hold cores for 3s to double score!</p>
-                            <button class="start-btn" data-game="asteroids">START GAME</button>
-                            <button class="back-btn">← BACK</button>
-                        </div>
-                        
-                        <div id="start-screen-flames" class="start-screen hidden">
-                            <h1>FLAMES</h1>
-                            <p>🔥 Calculate your bond</p>
-                            <p class="tip">Friends? Lover? Marriage? Find out!</p>
-                            <button class="start-btn" data-game="flames">START GAME</button>
-                            <button class="back-btn">← BACK</button>
-                        </div>
-                        
-                        <div id="start-screen-memory" class="start-screen hidden">
-                            <h1>MEMORY MATCH</h1>
-                            <p>🎴 2 Player Memory Game</p>
-                            <p class="tip">He vs She - Match the most pairs!</p>
-                            <button class="start-btn" data-game="memory">START GAME</button>
-                            <button class="back-btn">← BACK</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="ps-controls">
-                    <div id="d-pad">
-                        <div class="dpad-up"></div>
-                        <div class="dpad-down"></div>
-                        <div class="dpad-left"></div>
-                        <div class="dpad-right"></div>
-                        <div class="dpad-center"></div>
-                    </div>
-                    <div id="buttons">
-                        <div class="btn btn-triangle"></div>
-                        <div class="btn btn-circle"></div>
-                        <div class="btn btn-cross"></div>
-                        <div class="btn btn-square"></div>
-                    </div>
-                </div>
-            </div>
-            <div id="ps-bottom">
-                <div id="ps-ports"></div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.min.js"></script>
-    <script src="game.js"></script>
-</body>
-</html>
+/* Valentine's Heart Catch - Pixelated Arcade Style */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Pixelated font for arcade feel */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+#game-wrapper {
+    transform: scale(0.9);
+}
+
+/* PlayStation Shell - Old Gray Model */
+#playstation-shell {
+    width: 420px;
+    background: linear-gradient(180deg, #7d7d7d 0%, #5a5a5a 30%, #4a4a4a 70%, #3d3d3d 100%);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 
+        0 20px 60px rgba(0,0,0,0.6),
+        inset 0 2px 0 rgba(255,255,255,0.2),
+        inset 0 -2px 0 rgba(0,0,0,0.3);
+    border: 3px solid #6a6a6a;
+}
+
+#ps-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+#ps-logo {
+    font-size: 8px;
+    color: #333;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+}
+
+#ps-lid {
+    flex: 1;
+    height: 12px;
+    background: #555;
+    border-radius: 2px;
+    position: relative;
+}
+
+#ps-disc-slot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 4px;
+    background: #333;
+    border-radius: 2px;
+}
+
+/* Screen Bezel */
+#ps-screen-bezel {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 15px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+#ps-screen-container {
+    background: #0d0d0d;
+    border-radius: 4px;
+    aspect-ratio: 4/3;
+    position: relative;
+    overflow: hidden;
+}
+
+#game-canvas-wrapper {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#game-canvas-wrapper.active {
+    opacity: 1;
+}
+
+#game-canvas-wrapper.zoom-in {
+    animation: zoomIn 0.8s ease-out forwards;
+}
+
+#game-canvas-wrapper.zoom-out {
+    animation: zoomOut 0.8s ease-in forwards;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes zoomOut {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* Pixelated canvas rendering */
+#game-canvas {
+    width: 100% !important;
+    height: 100% !important;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    image-rendering: -moz-crisp-edges;
+    display: block;
+}
+
+/* Start Screen */
+#game-select-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+
+#game-select-screen h1 {
+    font-size: 12px;
+    margin-bottom: 10px;
+    text-shadow: 3px 3px 0 #000;
+    color: #fbbf24;
+    animation: blink 1.5s infinite;
+}
+
+#game-select-screen .subtitle {
+    font-size: 6px;
+    margin-bottom: 20px;
+    color: #94a3b8;
+}
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 240px;
+}
+
+.game-card {
+    font-family: 'Press Start 2P', monospace;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 3px solid #334155;
+    border-radius: 6px;
+    padding: 12px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 0 #0f172a;
+}
+
+.game-card:hover {
+    border-color: #fbbf24;
+    transform: translateY(-3px);
+    box-shadow: 0 7px 0 #0f172a;
+}
+
+.game-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #0f172a;
+}
+
+.game-icon {
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.game-title {
+    font-size: 6px;
+    color: #fbbf24;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.game-desc {
+    font-size: 5px;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.start-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #2d1b4e 0%, #1a0a2e 100%);
+    color: #ff6b9d;
+    text-align: center;
+    padding: 20px;
+}
+
+.start-screen h1 {
+    font-size: 10px;
+    margin-bottom: 15px;
+    line-height: 1.6;
+    text-shadow: 2px 2px 0 #000;
+    animation: blink 1.5s infinite;
+}
+
+.start-screen p {
+    font-size: 6px;
+    margin-bottom: 10px;
+    color: #ffb3d9;
+}
+
+.start-screen .tip {
+    font-size: 5px;
+    color: #fbbf24;
+    margin-bottom: 20px;
+}
+
+.start-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 12px 20px;
+    background: #e91e63;
+    color: #fff;
+    border: 3px solid #ff4081;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #ad1457;
+    transition: all 0.1s;
+    margin-bottom: 10px;
+}
+
+.start-btn:hover {
+    background: #ff4081;
+    transform: translateY(-2px);
+}
+
+.start-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #ad1457;
+}
+
+.back-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    padding: 8px 15px;
+    background: #334155;
+    color: #94a3b8;
+    border: 2px solid #475569;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #1e293b;
+    transition: all 0.1s;
+}
+
+.back-btn:hover {
+    background: #475569;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.back-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #1e293b;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.6; }
+}
+
+/* Hide screens when not active */
+.hidden {
+    display: none !important;
+}
+
+#game-select-screen.hidden {
+    display: none !important;
+}
+
+/* PlayStation Controls */
+#ps-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 10px;
+}
+
+#d-pad {
+    width: 60px;
+    height: 60px;
+    position: relative;
+}
+
+.dpad-up, .dpad-down, .dpad-left, .dpad-right {
+    position: absolute;
+    background: #333;
+    border-radius: 2px;
+}
+
+.dpad-up { width: 16px; height: 12px; top: 0; left: 22px; }
+.dpad-down { width: 16px; height: 12px; bottom: 0; left: 22px; }
+.dpad-left { width: 12px; height: 16px; left: 0; top: 22px; }
+.dpad-right { width: 12px; height: 16px; right: 0; top: 22px; }
+
+.dpad-center {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #444;
+    border-radius: 2px;
+    top: 20px;
+    left: 20px;
+}
+
+#buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.btn-triangle { background: #4caf50; }
+.btn-circle { background: #2196f3; }
+.btn-cross { background: #f44336; }
+.btn-square { background: #ffeb3b; }
+
+#ps-bottom {
+    height: 8px;
+    background: #3d3d3d;
+    border-radius: 0 0 15px 15px;
+}
