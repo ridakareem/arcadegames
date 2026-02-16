@@ -50,6 +50,9 @@ function showGameSelect() {
     canvasWrapper.classList.remove('zoom-in', 'active');
     canvasWrapper.classList.add('zoom-out');
     
+    // Clear any HTML content from FLAMES or Memory games
+    canvasWrapper.innerHTML = '';
+    
     if (window.arcadeGame) {
         window.arcadeGame.destroy(true);
         window.arcadeGame = null;
